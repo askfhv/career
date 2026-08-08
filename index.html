@@ -6,12 +6,22 @@
     <title>公职类就业·硕士发展全流程规划 | 御风工作室</title>
     <style>
         :root {
-            --primary-color: #A6192E; /* 类似上财红 */
+            --primary-color: #A6192E; /* 上财红 */
             --secondary-color: #D4AF37; /* 金色点缀 */
             --bg-color: #F8F9FA;
             --card-bg: #FFFFFF;
             --text-main: #333333;
             --text-muted: #666666;
+            
+            /* 四大支线主题色 */
+            --color-academic: #1565C0;
+            --bg-academic: #E3F2FD;
+            --color-exam: #EF6C00;
+            --bg-exam: #FFF3E0;
+            --color-intern: #2E7D32;
+            --bg-intern: #E8F5E9;
+            --color-party: #C2185B;
+            --bg-party: #FCE4EC;
         }
 
         body {
@@ -31,6 +41,8 @@
             box-shadow: 0 0 20px rgba(0,0,0,0.1);
             position: relative;
             overflow-x: hidden;
+            padding-bottom: 90px; /* 为吸底进度条留出空间 */
+            box-sizing: border-box;
         }
 
         /* 顶部头图区 */
@@ -70,7 +82,7 @@
         .tabs {
             display: flex;
             justify-content: center;
-            margin: -20px 20px 20px;
+            margin: -20px 20px 15px;
             background: white;
             border-radius: 50px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
@@ -99,10 +111,35 @@
             box-shadow: 0 2px 8px rgba(166, 25, 46, 0.4);
         }
 
+        /* 图例区 (Legend) */
+        .track-legend {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            margin: 0 20px 20px;
+            padding: 10px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        }
+
+        .legend-tag {
+            font-size: 12px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+        
+        .l-academic { background: var(--bg-academic); color: var(--color-academic); }
+        .l-exam { background: var(--bg-exam); color: var(--color-exam); }
+        .l-intern { background: var(--bg-intern); color: var(--color-intern); }
+        .l-party { background: var(--bg-party); color: var(--color-party); }
+
         /* 内容区 */
         .content-section {
             display: none;
-            padding: 10px 20px 40px;
+            padding: 0 20px 20px;
             animation: fadeIn 0.5s ease;
         }
 
@@ -135,13 +172,12 @@
         .timeline-item {
             position: relative;
             margin-bottom: 25px;
-            cursor: pointer;
         }
 
         .timeline-marker {
             position: absolute;
             left: -26px;
-            top: 4px;
+            top: 15px;
             width: 15px;
             height: 15px;
             background-color: white;
@@ -151,7 +187,7 @@
             box-shadow: 0 0 0 3px rgba(166, 25, 46, 0.1);
         }
 
-        .timeline-item:hover .timeline-marker, .timeline-item.open .timeline-marker {
+        .timeline-item.open .timeline-marker {
             background-color: var(--primary-color);
             transform: scale(1.2);
         }
@@ -165,9 +201,8 @@
             transition: all 0.3s ease;
         }
 
-        .timeline-item.open .timeline-content {
-            box-shadow: 0 5px 15px rgba(166, 25, 46, 0.1);
-            border-color: #fbd3d9;
+        .timeline-header {
+            cursor: pointer;
         }
 
         .month-title {
@@ -192,7 +227,7 @@
         .phase-subtitle {
             font-size: 13px;
             color: var(--text-muted);
-            margin-bottom: 0;
+            margin: 0;
         }
 
         /* 详情展开区 */
@@ -204,35 +239,90 @@
         }
 
         .timeline-item.open .details {
-            max-height: 500px; /* 足够高以容纳内容 */
+            max-height: 1200px;
             margin-top: 15px;
             opacity: 1;
         }
 
         .task-list {
-            list-style: none;
-            padding: 0;
-            margin: 0 0 10px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
 
-        .task-list li {
+        /* 可点击的任务卡片交互设计 */
+        .task-item {
+            display: flex;
+            align-items: flex-start;
+            background: #fafafa;
+            padding: 10px 12px;
+            border-radius: 8px;
+            border-left: 4px solid #ccc;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.25s ease;
             position: relative;
-            padding-left: 18px;
-            font-size: 14px;
-            line-height: 1.6;
-            margin-bottom: 6px;
-            color: var(--text-main);
         }
 
-        .task-list li::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 8px;
-            width: 6px;
-            height: 6px;
-            background-color: var(--secondary-color);
-            border-radius: 50%;
+        .task-item.t-academic { border-left-color: var(--color-academic); }
+        .task-item.t-exam { border-left-color: var(--color-exam); }
+        .task-item.t-intern { border-left-color: var(--color-intern); }
+        .task-item.t-party { border-left-color: var(--color-party); }
+
+        /* 完成状态下的样式（打勾、虚化、中划线） */
+        .task-item.completed {
+            opacity: 0.55;
+            background: #f0f0f0;
+            border-left-color: #aaaaaa !important;
+        }
+
+        .task-item.completed .task-text {
+            text-decoration: line-through;
+            color: #888888;
+        }
+
+        .checkbox-icon {
+            width: 16px;
+            height: 16px;
+            border: 2px solid #ccc;
+            border-radius: 4px;
+            margin-right: 8px;
+            margin-top: 2px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            background: #fff;
+        }
+
+        .task-item.completed .checkbox-icon {
+            background-color: var(--color-intern);
+            border-color: var(--color-intern);
+        }
+
+        .task-item.completed .checkbox-icon::after {
+            content: '✓';
+            color: white;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .task-tag {
+            flex-shrink: 0;
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-right: 8px;
+            margin-top: 1px;
+            font-weight: bold;
+        }
+
+        .task-text {
+            font-size: 14px;
+            line-height: 1.5;
+            color: var(--text-main);
+            transition: all 0.2s ease;
         }
 
         .policy-box {
@@ -242,7 +332,7 @@
             border-radius: 0 6px 6px 0;
             font-size: 13px;
             color: #856404;
-            margin-top: 10px;
+            margin-top: 12px;
         }
         
         .policy-box strong {
@@ -251,15 +341,63 @@
             color: #664d03;
         }
 
+        /* 底部吸底动态进度条 */
+        .progress-fixed {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 480px;
+            background: #ffffff;
+            border-top: 1px solid #eaeaea;
+            padding: 12px 20px 15px;
+            box-shadow: 0 -4px 15px rgba(0,0,0,0.08);
+            z-index: 100;
+            box-sizing: border-box;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .progress-title {
+            font-size: 12px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .progress-status {
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--primary-color);
+        }
+
+        .progress-bar-bg {
+            height: 8px;
+            background: #eee;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--secondary-color) 0%, var(--primary-color) 100%);
+            width: 0%;
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 4px;
+        }
+
         .footer {
             text-align: center;
             padding: 20px;
             font-size: 12px;
             color: #aaa;
-            margin-top: 20px;
         }
 
-        /* 互动提示动画 */
         .pulse-hint {
             text-align: center;
             font-size: 12px;
@@ -284,89 +422,152 @@
         <h1 class="header-title">公职类就业<br>硕士发展全流程规划</h1>
         <div class="header-desc">
             从入学奠基到落地毕业<br>
-            以26届为例，带你交互式探索两年的关键节点
+            点击任务卡片标记完成度，解锁你的规划进度
         </div>
     </div>
 
     <div class="tabs">
-        <button class="tab-btn active" onclick="switchTab('year1')">研一学年</button>
-        <button class="tab-btn" onclick="switchTab('year2')">研二学年</button>
+        <button class="tab-btn active" onclick="switchTab('year1', this)">研一学年</button>
+        <button class="tab-btn" onclick="switchTab('year2', this)">研二学年</button>
     </div>
 
-    <div class="pulse-hint">👇 点击下方各个月份卡片查看详细规划 👇</div>
+    <div class="track-legend">
+        <span class="legend-tag l-academic">📘 学业论文线</span>
+        <span class="legend-tag l-exam">🎯 公考备考线</span>
+        <span class="legend-tag l-intern">💼 实习秋招线</span>
+        <span class="legend-tag l-party">🚩 党团荣誉线</span>
+    </div>
 
-    <!-- 研一学年内容 -->
+    <div class="pulse-hint">👇 点击卡片展开节点，再次点击可标记完成 👇</div>
+<!-- 研一学年内容 -->
     <div id="year1" class="content-section active">
         <div class="timeline">
             
-            <div class="timeline-item" onclick="toggleItem(this)">
+            <div class="timeline-item" >
                 <div class="timeline-marker"></div>
                 <div class="timeline-content">
-                    <h3 class="month-title">9月 - 10月 <span class="hint">点击展开</span></h3>
-                    <p class="phase-subtitle">入学奠基 · 开启征程</p>
-                    <div class="details">
-                        <ul class="task-list">
-                            <li>提交入党申请书，竞选班长/团支书等核心干部</li>
-                            <li>摸底往届招录政策，行测申论入门</li>
-                            <li>锁定绩点前 50%</li>
-                            <li>10月：推进入党积极分子认定</li>
-                            <li>完成行测核心模块基础学习，跟进招录政策</li>
-                        </ul>
+                    <div class="timeline-header" onclick="toggleItem(this.parentElement.parentElement)">
+                        <h3 class="month-title">9月 - 10月 <span class="hint">点击展开</span></h3>
+                        <p class="phase-subtitle">入学奠基 · 开启征程</p>
                     </div>
-                </div>
-            </div>
-
-            <div class="timeline-item" onclick="toggleItem(this)">
-                <div class="timeline-marker"></div>
-                <div class="timeline-content">
-                    <h3 class="month-title">11月 - 12月 <span class="hint">点击展开</span></h3>
-                    <p class="phase-subtitle">门槛搭建 · 基础复盘</p>
+                    
                     <div class="details">
-                        <ul class="task-list">
-                            <li>期中绩点保底，期末绩点攻坚</li>
-                            <li>完成入党积极分子考核</li>
-                            <li>行测申论基础刷题</li>
-                            <li>完成笔试基础阶段复盘</li>
-                            <li><strong>锁定 2026 届目标报考清单</strong></li>
-                        </ul>
-                        <div class="policy-box">
-                            <strong>📅 招录大环境参考</strong>
-                            此时外界正处于25届国考、多省定向选调笔试期，是极佳的政策复盘与备考强化窗口期。
+                        <div class="task-list">
+                            <div class="task-item t-party" onclick="toggleTask(this)">
+                                <div class="checkbox-icon"></div>
+                                <span class="task-tag l-party">党团荣誉</span>
+                                <div class="task-text">9月：提交入党申请书，竞选班长/团支书等核心干部；<br>10月：推进入党积极分子认定。</div>
+                            </div>
+                            <div class="task-item t-exam" onclick="toggleTask(this)">
+                                <div class="checkbox-icon"></div>
+                                <span class="task-tag l-exam">公考备考</span>
+                                <div class="task-text">9月：摸底往届招录政策，行测申论入门；<br>10月：完成行测核心模块基础学习，跟进政策。</div>
+                            </div>
+                            <div class="task-item t-academic" onclick="toggleTask(this)">
+                                <div class="checkbox-icon"></div>
+                                <span class="task-tag l-academic">学业论文</span>
+                                <div class="task-text">日常学业奠基，锁定绩点前 50%。</div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="timeline-item" onclick="toggleItem(this)">
+            <div class="timeline-item" >
                 <div class="timeline-marker"></div>
                 <div class="timeline-content">
-                    <h3 class="month-title">1月 - 寒假 <span class="hint">点击展开</span></h3>
-                    <p class="phase-subtitle">实践强化 · 简历打磨</p>
+                    <div class="timeline-header" onclick="toggleItem(this.parentElement.parentElement)">
+                        <h3 class="month-title">11月 - 12月 <span class="hint">点击展开</span></h3>
+                        <p class="phase-subtitle">门槛搭建 · 基础复盘</p>
+                    </div>
+                    
                     <div class="details">
-                        <ul class="task-list">
-                            <li>完成期末考核</li>
-                            <li>锁定寒假政府挂职/实习，并制定寒假笔试强化计划</li>
-                            <li>行测申论系统强化刷题</li>
-                            <li>完成政府挂职实习，敲定硕士论文选题</li>
-                            <li><strong>打磨多赛道简历</strong></li>
-                        </ul>
+                        <div class="task-list">
+                            <div class="task-item t-exam" onclick="toggleTask(this)">
+                                <div class="checkbox-icon"></div>
+                                <span class="task-tag l-exam">公考备考</span>
+                                <div class="task-text">行测申论基础刷题；完成笔试基础阶段复盘；<strong>锁定26届目标报考清单</strong>。</div>
+                            </div>
+                            <div class="task-item t-academic" onclick="toggleTask(this)">
+                                <div class="checkbox-icon"></div>
+                                <span class="task-tag l-academic">学业论文</span>
+                                <div class="task-text">期中绩点保底，期末绩点攻坚。</div>
+                            </div>
+                            <div class="task-item t-party" onclick="toggleTask(this)">
+                                <div class="checkbox-icon"></div>
+                                <span class="task-tag l-party">党团荣誉</span>
+                                <div class="task-text">完成入党积极分子考核。</div>
+                            </div>
+                        </div>
+                        <div class="policy-box">
+                            <strong>📅 招录大环境参考</strong>
+                            外界正处于25届国考、多省定向选调笔试期，是极佳的政策复盘与备考强化窗口期。
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="timeline-item" onclick="toggleItem(this)">
+            <div class="timeline-item" >
                 <div class="timeline-marker"></div>
                 <div class="timeline-content">
-                    <h3 class="month-title">3月 - 4月 <span class="hint">点击展开</span></h3>
-                    <p class="phase-subtitle">荣誉参评 · 专项突破</p>
+                    <div class="timeline-header" onclick="toggleItem(this.parentElement.parentElement)">
+                        <h3 class="month-title">1月 - 寒假 <span class="hint">点击展开</span></h3>
+                        <p class="phase-subtitle">实践强化 · 简历打磨</p>
+                    </div>
+                    
                     <div class="details">
-                        <ul class="task-list">
-                            <li>参评优秀学生/优秀团干部等核心荣誉</li>
-                            <li>开启政府挂职实习</li>
-                            <li>行测申论题海强化、专项突破</li>
-                            <li>推进预备党员身份认定</li>
-                            <li><strong>完成硕士论文开题</strong></li>
-                        </ul>
+                        <div class="task-list">
+                            <div class="task-item t-intern" onclick="toggleTask(this)">
+                                <div class="checkbox-icon"></div>
+                                <span class="task-tag l-intern">实习秋招</span>
+                                <div class="task-text">锁定寒假政府挂职/实习，并推进完成；<strong>打磨多赛道简历</strong>。</div>
+                            </div>
+                            <div class="task-item t-exam" onclick="toggleTask(this)">
+                                <div class="checkbox-icon"></div>
+                                <span class="task-tag l-exam">公考备考</span>
+                                <div class="task-text">制定寒假笔试强化计划；行测申论系统强化刷题。</div>
+                            </div>
+                            <div class="task-item t-academic" onclick="toggleTask(this)">
+                                <div class="checkbox-icon"></div>
+                                <span class="task-tag l-academic">学业论文</span>
+                                <div class="task-text">完成期末考核；敲定硕士论文选题方向。</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item" >
+                <div class="timeline-marker"></div>
+                <div class="timeline-content">
+                    <div class="timeline-header" onclick="toggleItem(this.parentElement.parentElement)">
+                        <h3 class="month-title">3月 - 4月 <span class="hint">点击展开</span></h3>
+                        <p class="phase-subtitle">荣誉参评 · 专项突破</p>
+                    </div>
+                    
+                    <div class="details">
+                        <div class="task-list">
+                            <div class="task-item t-party" onclick="toggleTask(this)">
+                                <div class="checkbox-icon"></div>
+                                <span class="task-tag l-party">党团荣誉</span>
+                                <div class="task-text">参评优秀学生/优秀团干部等核心荣誉；推进预备党员身份认定。</div>
+                            </div>
+                            <div class="task-item t-exam" onclick="toggleTask(this)">
+                                <div class="checkbox-icon"></div>
+                                <span class="task-tag l-exam">公考备考</span>
+                                <div class="task-text">行测申论进入题海强化、专项突破阶段。</div>
+                            </div>
+                            <div class="task-item t-academic" onclick="toggleTask(this)">
+                                <div class="checkbox-icon"></div>
+                                <span class="task-tag l-academic">学业论文</span>
+                                <div class="task-text"><strong>完成硕士论文开题</strong>。</div>
+                            </div>
+                            <div class="task-item t-intern" onclick="toggleTask(this)">
+                                <div class="checkbox-icon"></div>
+                                <span class="task-tag l-intern">实习秋招</span>
+                                <div class="task-text">开启日常的政府挂职或相关实习。</div>
+                            </div>
+                        </div>
                         <div class="policy-box">
                             <strong>📅 招录大环境参考</strong>
                             外界正值多省联考、事业单位联考及三支一扶报名启动期。
@@ -375,38 +576,65 @@
                 </div>
             </div>
 
-            <div class="timeline-item" onclick="toggleItem(this)">
+            <div class="timeline-item" >
                 <div class="timeline-marker"></div>
                 <div class="timeline-content">
-                    <h3 class="month-title">5月 - 6月 <span class="hint">点击展开</span></h3>
-                    <p class="phase-subtitle">学业冲刺 · 全真模拟</p>
+                    <div class="timeline-header" onclick="toggleItem(this.parentElement.parentElement)">
+                        <h3 class="month-title">5月 - 6月 <span class="hint">点击展开</span></h3>
+                        <p class="phase-subtitle">学业冲刺 · 全真模拟</p>
+                    </div>
+                    
                     <div class="details">
-                        <ul class="task-list">
-                            <li>期末绩点保底，确认全年绩点达标</li>
-                            <li>完成挂职实习收尾</li>
-                            <li>笔试开启全真套卷模拟</li>
-                            <li>全面复盘选调报考硬性门槛</li>
-                            <li><strong>完成论文开题答辩</strong></li>
-                        </ul>
+                        <div class="task-list">
+                            <div class="task-item t-exam" onclick="toggleTask(this)">
+                                <div class="checkbox-icon"></div>
+                                <span class="task-tag l-exam">公考备考</span>
+                                <div class="task-text">笔试开启全真套卷模拟；全面复盘选调报考的硬性门槛条件。</div>
+                            </div>
+                            <div class="task-item t-academic" onclick="toggleTask(this)">
+                                <div class="checkbox-icon"></div>
+                                <span class="task-tag l-academic">学业论文</span>
+                                <div class="task-text">期末绩点保底，确认全年绩点达标；<strong>完成论文开题答辩</strong>。</div>
+                            </div>
+                            <div class="task-item t-intern" onclick="toggleTask(this)">
+                                <div class="checkbox-icon"></div>
+                                <span class="task-tag l-intern">实习秋招</span>
+                                <div class="task-text">完成挂职实习的收尾工作。</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="timeline-item" onclick="toggleItem(this)">
+            <div class="timeline-item" >
                 <div class="timeline-marker"></div>
                 <div class="timeline-content">
-                    <h3 class="month-title">7月 - 8月 <span class="hint">点击展开</span></h3>
-                    <p class="phase-subtitle">暑期集训 · 迎战秋招</p>
+                    <div class="timeline-header" onclick="toggleItem(this.parentElement.parentElement)">
+                        <h3 class="month-title">7月 - 8月 <span class="hint">点击展开</span></h3>
+                        <p class="phase-subtitle">暑期集训 · 迎战秋招</p>
+                    </div>
+                    
                     <div class="details">
-                        <ul class="task-list">
-                            <li>全职笔试系统集训，突破目标省份选调特色题型</li>
-                            <li>行测申论真题冲刺，面试基础前置学习</li>
-                            <li>推进论文核心章节写作</li>
-                            <li><strong>完成秋招全素材筹备</strong></li>
-                        </ul>
+                        <div class="task-list">
+                            <div class="task-item t-exam" onclick="toggleTask(this)">
+                                <div class="checkbox-icon"></div>
+                                <span class="task-tag l-exam">公考备考</span>
+                                <div class="task-text">全职笔试系统集训，突破目标省份选调特色题型；行测申论真题冲刺，<strong>面试基础前置学习</strong>。</div>
+                            </div>
+                            <div class="task-item t-intern" onclick="toggleTask(this)">
+                                <div class="checkbox-icon"></div>
+                                <span class="task-tag l-intern">实习秋招</span>
+                                <div class="task-text"><strong>完成秋招全素材筹备</strong>，准备全面网申。</div>
+                            </div>
+                            <div class="task-item t-academic" onclick="toggleTask(this)">
+                                <div class="checkbox-icon"></div>
+                                <span class="task-tag l-academic">学业论文</span>
+                                <div class="task-text">推进论文核心章节写作。</div>
+                            </div>
+                        </div>
                         <div class="policy-box">
                             <strong>📅 招录大环境参考</strong>
-                            2026届央国企秋招网申通道陆续开启，定向选调政策提前发布。
+                            2026届央国企秋招网申通道陆续开启，部分省份定向选调政策提前发布。
                         </div>
                     </div>
                 </div>
@@ -419,17 +647,32 @@
     <div id="year2" class="content-section">
         <div class="timeline">
             
-            <div class="timeline-item" onclick="toggleItem(this)">
+            <div class="timeline-item" >
                 <div class="timeline-marker"></div>
                 <div class="timeline-content">
-                    <h3 class="month-title">9月 <span class="hint">点击展开</span></h3>
-                    <p class="phase-subtitle">秋招启动 · 同步多赛道</p>
+                    <div class="timeline-header" onclick="toggleItem(this.parentElement.parentElement)">
+                        <h3 class="month-title">9月 <span class="hint">点击展开</span></h3>
+                        <p class="phase-subtitle">秋招启动 · 同步多赛道</p>
+                    </div>
+                    
                     <div class="details">
-                        <ul class="task-list">
-                            <li>秋招启动，保持笔试应试状态</li>
-                            <li>开启央国企秋招网申</li>
-                            <li>完成论文初稿</li>
-                        </ul>
+                        <div class="task-list">
+                            <div class="task-item t-intern" onclick="toggleTask(this)">
+                                <div class="checkbox-icon"></div>
+                                <span class="task-tag l-intern">实习秋招</span>
+                                <div class="task-text">秋招正式启动；开启央国企秋招全面网申。</div>
+                            </div>
+                            <div class="task-item t-exam" onclick="toggleTask(this)">
+                                <div class="checkbox-icon"></div>
+                                <span class="task-tag l-exam">公考备考</span>
+                                <div class="task-text">保持笔试高强度应试状态。</div>
+                            </div>
+                            <div class="task-item t-academic" onclick="toggleTask(this)">
+                                <div class="checkbox-icon"></div>
+                                <span class="task-tag l-academic">学业论文</span>
+                                <div class="task-text"><strong>完成硕士论文初稿</strong>。</div>
+                            </div>
+                        </div>
                         <div class="policy-box">
                             <strong>📢 政策与考情 (以26届为例)</strong>
                             2026届 沪/黑/京 首批定向选调公告发布+报名启动。
@@ -438,16 +681,22 @@
                 </div>
             </div>
 
-            <div class="timeline-item" onclick="toggleItem(this)">
+            <div class="timeline-item" >
                 <div class="timeline-marker"></div>
                 <div class="timeline-content">
-                    <h3 class="month-title">10月 <span class="hint">点击展开</span></h3>
-                    <p class="phase-subtitle">笔试高峰 · 进面集训</p>
+                    <div class="timeline-header" onclick="toggleItem(this.parentElement.parentElement)">
+                        <h3 class="month-title">10月 <span class="hint">点击展开</span></h3>
+                        <p class="phase-subtitle">笔试高峰 · 进面集训</p>
+                    </div>
+                    
                     <div class="details">
-                        <ul class="task-list">
-                            <li>参加核心统考笔试</li>
-                            <li>进面岗位启动面试集训</li>
-                        </ul>
+                        <div class="task-list">
+                            <div class="task-item t-exam" onclick="toggleTask(this)">
+                                <div class="checkbox-icon"></div>
+                                <span class="task-tag l-exam">公考备考</span>
+                                <div class="task-text">参加核心统考笔试；针对部分进面岗位，启动面试集训。</div>
+                            </div>
+                        </div>
                         <div class="policy-box">
                             <strong>📢 政策与考情 (以26届为例)</strong>
                             • 川/渝/鲁/浙等12省第二批定向选调公告发布+报名<br>
@@ -458,16 +707,32 @@
                 </div>
             </div>
 
-            <div class="timeline-item" onclick="toggleItem(this)">
+            <div class="timeline-item" >
                 <div class="timeline-marker"></div>
                 <div class="timeline-content">
-                    <h3 class="month-title">11月 <span class="hint">点击展开</span></h3>
-                    <p class="phase-subtitle">攻坚冲刺 · 意向签约</p>
+                    <div class="timeline-header" onclick="toggleItem(this.parentElement.parentElement)">
+                        <h3 class="month-title">11月 <span class="hint">点击展开</span></h3>
+                        <p class="phase-subtitle">攻坚冲刺 · 意向签约</p>
+                    </div>
+                    
                     <div class="details">
-                        <ul class="task-list">
-                            <li>推进秋招笔面试，推进意向 offer 签约</li>
-                            <li>完成论文终稿定稿</li>
-                        </ul>
+                        <div class="task-list">
+                            <div class="task-item t-exam" onclick="toggleTask(this)">
+                                <div class="checkbox-icon"></div>
+                                <span class="task-tag l-exam">公考备考</span>
+                                <div class="task-text">全面推进秋招笔面试流程。</div>
+                            </div>
+                            <div class="task-item t-intern" onclick="toggleTask(this)">
+                                <div class="checkbox-icon"></div>
+                                <span class="task-tag l-intern">实习秋招</span>
+                                <div class="task-text">推进意向 Offer 的签约。</div>
+                            </div>
+                            <div class="task-item t-academic" onclick="toggleTask(this)">
+                                <div class="checkbox-icon"></div>
+                                <span class="task-tag l-academic">学业论文</span>
+                                <div class="task-text"><strong>完成硕士论文终稿定稿</strong>。</div>
+                            </div>
+                        </div>
                         <div class="policy-box">
                             <strong>📢 政策与考情 (以26届为例)</strong>
                             • 剩余省份第四批定向选调公告+报名<br>
@@ -479,17 +744,27 @@
                 </div>
             </div>
 
-            <div class="timeline-item" onclick="toggleItem(this)">
+            <div class="timeline-item" >
                 <div class="timeline-marker"></div>
                 <div class="timeline-content">
-                    <h3 class="month-title">12月 - 1月 <span class="hint">点击展开</span></h3>
-                    <p class="phase-subtitle">面试冲刺 · 论文盲审</p>
+                    <div class="timeline-header" onclick="toggleItem(this.parentElement.parentElement)">
+                        <h3 class="month-title">12月 - 1月 <span class="hint">点击展开</span></h3>
+                        <p class="phase-subtitle">面试冲刺 · 论文盲审</p>
+                    </div>
+                    
                     <div class="details">
-                        <ul class="task-list">
-                            <li>进面岗位面试攻坚，敲定秋招保底 offer</li>
-                            <li>论文提交盲审</li>
-                            <li>录用公示，办理毕业前置手续</li>
-                        </ul>
+                        <div class="task-list">
+                            <div class="task-item t-intern" onclick="toggleTask(this)">
+                                <div class="checkbox-icon"></div>
+                                <span class="task-tag l-intern">实习秋招</span>
+                                <div class="task-text">进面岗位面试攻坚，<strong>敲定秋招保底 Offer</strong>。</div>
+                            </div>
+                            <div class="task-item t-academic" onclick="toggleTask(this)">
+                                <div class="checkbox-icon"></div>
+                                <span class="task-tag l-academic">学业论文</span>
+                                <div class="task-text"><strong>论文提交盲审</strong>；录用单位公示后办理毕业前置手续。</div>
+                            </div>
+                        </div>
                         <div class="policy-box">
                             <strong>📢 政策与考情 (以26届为例)</strong>
                             • <strong>独立省考笔试：</strong>12月7日<br>
@@ -500,17 +775,32 @@
                 </div>
             </div>
 
-            <div class="timeline-item" onclick="toggleItem(this)">
+            <div class="timeline-item" >
                 <div class="timeline-marker"></div>
                 <div class="timeline-content">
-                    <h3 class="month-title">寒假 - 3月 <span class="hint">点击展开</span></h3>
-                    <p class="phase-subtitle">春招启动 · 补录机会</p>
+                    <div class="timeline-header" onclick="toggleItem(this.parentElement.parentElement)">
+                        <h3 class="month-title">寒假 - 3月 <span class="hint">点击展开</span></h3>
+                        <p class="phase-subtitle">春招启动 · 补录机会</p>
+                    </div>
+                    
                     <div class="details">
-                        <ul class="task-list">
-                            <li>多省联考笔试冲刺，跟进国考/选调补录</li>
-                            <li>筹备春招，开启央国企春招</li>
-                            <li>完成论文盲审终稿</li>
-                        </ul>
+                        <div class="task-list">
+                            <div class="task-item t-exam" onclick="toggleTask(this)">
+                                <div class="checkbox-icon"></div>
+                                <span class="task-tag l-exam">公考备考</span>
+                                <div class="task-text">多省联考笔试最后冲刺，跟进国考/选调补录机会。</div>
+                            </div>
+                            <div class="task-item t-intern" onclick="toggleTask(this)">
+                                <div class="checkbox-icon"></div>
+                                <span class="task-tag l-intern">实习秋招</span>
+                                <div class="task-text">筹备春招，开启央国企春招网申。</div>
+                            </div>
+                            <div class="task-item t-academic" onclick="toggleTask(this)">
+                                <div class="checkbox-icon"></div>
+                                <span class="task-tag l-academic">学业论文</span>
+                                <div class="task-text">完成论文盲审终稿修改。</div>
+                            </div>
+                        </div>
                         <div class="policy-box">
                             <strong>📢 政策与考情 (以26届为例)</strong>
                             • 国考/定向选调补录公告发布<br>
@@ -521,18 +811,27 @@
                 </div>
             </div>
 
-            <div class="timeline-item" onclick="toggleItem(this)">
+            <div class="timeline-item" >
                 <div class="timeline-marker"></div>
                 <div class="timeline-content">
-                    <h3 class="month-title">4月 - 6月 <span class="hint">点击展开</span></h3>
-                    <p class="phase-subtitle">体检政审 · 毕业入职</p>
+                    <div class="timeline-header" onclick="toggleItem(this.parentElement.parentElement)">
+                        <h3 class="month-title">4月 - 6月 <span class="hint">点击展开</span></h3>
+                        <p class="phase-subtitle">体检政审 · 毕业入职</p>
+                    </div>
+                    
                     <div class="details">
-                        <ul class="task-list">
-                            <li>完成进面岗位面试、体检政审，敲定最终去向</li>
-                            <li>推进春招 offer 落地</li>
-                            <li>通过硕士论文答辩，完成全部毕业手续</li>
-                            <li>顺利毕业，对接单位确认入职</li>
-                        </ul>
+                        <div class="task-list">
+                            <div class="task-item t-intern" onclick="toggleTask(this)">
+                                <div class="checkbox-icon"></div>
+                                <span class="task-tag l-intern">实习秋招</span>
+                                <div class="task-text">完成进面岗位面试、体检政审，敲定最终去向；推进春招 offer 落地。</div>
+                            </div>
+                            <div class="task-item t-academic" onclick="toggleTask(this)">
+                                <div class="checkbox-icon"></div>
+                                <span class="task-tag l-academic">学业论文</span>
+                                <div class="task-text"><strong>通过硕士论文答辩，完成全部毕业手续</strong>；顺利毕业，对接单位确认入职。</div>
+                            </div>
+                        </div>
                         <div class="policy-box">
                             <strong>📢 政策与考情 (以26届为例)</strong>
                             • 特岗教师/西部计划正式报名<br>
@@ -546,46 +845,97 @@
         </div>
     </div>
 
+
+
+
+
+
+
+
+
+
     <div class="footer">
         © 上海财经大学 御风工作室<br>
         此推文支持点击互动，图文素材仅供生涯规划参考。
     </div>
 
+    <!-- 底部吸底实时进度条 -->
+    <div class="progress-fixed">
+        <div class="progress-header">
+            <span class="progress-title">全流程规划完成度</span>
+            <span id="progress-status" class="progress-status">Keep Going! 0%</span>
+        </div>
+        <div class="progress-bar-bg">
+            <div id="progress-fill" class="progress-bar-fill"></div>
+        </div>
+    </div>
+
 </div>
 
 <script>
-    // 切换Tab功能
-    function switchTab(tabId) {
-        // 更新按钮状态
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.classList.remove('active');
-        });
-        event.target.classList.add('active');
+    // Tab 切换逻辑
+    function switchTab(tabId, btnElement) {
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        btnElement.classList.add('active');
 
-        // 更新内容区状态
-        document.querySelectorAll('.content-section').forEach(section => {
-            section.classList.remove('active');
-        });
+        document.querySelectorAll('.content-section').forEach(section => section.classList.remove('active'));
         document.getElementById(tabId).classList.add('active');
-        
-        // 切换标签时收起所有已展开的卡片
-        document.querySelectorAll('.timeline-item').forEach(item => {
-            item.classList.remove('open');
-            let hint = item.querySelector('.hint');
-            if(hint) hint.innerText = "点击展开";
-        });
     }
 
-    // 展开/收起时间轴节点详情
+    // 展开/收起时间轴卡片
     function toggleItem(element) {
         element.classList.toggle('open');
         const hint = element.querySelector('.hint');
-        if(element.classList.contains('open')) {
+        if (element.classList.contains('open')) {
             hint.innerText = "点击收起";
         } else {
             hint.innerText = "点击展开";
         }
     }
+
+    // 任务卡片完成/未完成点击交互
+    function toggleTask(element) {
+        element.classList.toggle('completed');
+        updateProgress();
+    }
+
+    // 实时计算进度条与评语逻辑
+    function updateProgress() {
+        const allTasks = document.querySelectorAll('.task-item');
+        const completedTasks = document.querySelectorAll('.task-item.completed');
+        
+        if (allTasks.length === 0) return;
+
+        const percentage = Math.round((completedTasks.length / allTasks.length) * 100);
+        
+        // 更新进度条宽度
+        document.getElementById('progress-fill').style.width = percentage + '%';
+        
+        // 动态文字评价逻辑
+        const statusText = document.getElementById('progress-status');
+        let comment = "Keep Going!";
+
+        if (percentage === 0) {
+            comment = "Ready? 0%";
+        } else if (percentage < 30) {
+            comment = `Good Start! ${percentage}%`;
+        } else if (percentage < 60) {
+            comment = `Keep Going! ${percentage}%`;
+        } else if (percentage < 85) {
+            comment = `Great Job! ${percentage}%`;
+        } else if (percentage < 100) {
+            comment = `Almost There! ${percentage}%`;
+        } else {
+            comment = `Excellent! 100% 🎉`;
+        }
+
+        statusText.innerText = comment;
+    }
+
+    // 初始化时计算一次总进度
+    window.onload = function() {
+        updateProgress();
+    };
 </script>
 
 </body>
